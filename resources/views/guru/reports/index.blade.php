@@ -1,23 +1,23 @@
 <x-layouts.app title="Laporan Progres" role="guru">
     <div class="space-y-4">
 
-        <div class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div class="panel-card flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div>
-                <h3 class="text-lg font-semibold text-gray-900">Laporan Progres</h3>
-                <p class="mt-1 text-sm text-gray-500">Rekap progres kelompok per tugas yang Anda berikan.</p>
+                <h3 class="text-lg font-semibold text-slate-900">Laporan Progres</h3>
+                <p class="mt-1 text-sm text-slate-500">Rekap progres kelompok per tugas yang Anda berikan.</p>
             </div>
 
             <div class="flex gap-2">
                 <a href="{{ route('guru.reports.export', request()->query()) }}">
-                    <x-primary-button type="button" class="!bg-status-success shrink-0">Export Excel (CSV)</x-primary-button>
+                    <x-primary-button type="button" class="!bg-status-success shrink-0">Export Excel (XLSX)</x-primary-button>
                 </a>
-                <a href="{{ route('guru.reports.print', request()->query()) }}" target="_blank">
-                    <x-primary-button type="button" class="shrink-0">Export PDF (Cetak)</x-primary-button>
+                <a href="{{ route('guru.reports.print', request()->query()) }}">
+                    <x-primary-button type="button" class="shrink-0">Export PDF</x-primary-button>
                 </a>
             </div>
         </div>
 
-        <form method="GET" action="{{ route('guru.reports.index') }}" class="flex flex-wrap items-end gap-2 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <form method="GET" action="{{ route('guru.reports.index') }}" class="panel-card flex flex-wrap items-end gap-2 p-4">
             <div class="w-full sm:w-52">
                 <x-label for="task_id" value="Tugas" class="mb-1 text-xs" />
                 <x-select name="task_id" id="task_id">
@@ -74,22 +74,19 @@
         @else
             <div class="space-y-6">
                 @foreach ($tasks as $task)
-                    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 px-6 py-4">
+                    <div class="panel-card overflow-hidden">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-6 py-4">
                             <div>
                                 <h4 class="font-semibold text-gray-900">{{ $task->title }}</h4>
                                 <p class="text-xs text-gray-400">
                                     {{ $task->subject }} &middot; Deadline {{ $task->deadline?->translatedFormat('d M Y') ?? '-' }}
                                 </p>
                             </div>
-                            <x-badge :color="\App\Models\Task::priorityColor($task->priority)">
-                                {{ \App\Models\Task::priorityLabel($task->priority) }}
-                            </x-badge>
                         </div>
 
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-100 text-sm">
-                                <thead class="bg-gray-50">
+                            <table class="min-w-full divide-y divide-slate-100 text-sm">
+                                <thead class="bg-slate-50">
                                     <tr class="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                                         <th class="px-5 py-3">Kelompok</th>
                                         <th class="px-5 py-3">Kelas</th>
@@ -98,11 +95,11 @@
                                         <th class="px-5 py-3">Nilai</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100">
+                                <tbody class="divide-y divide-slate-100">
                                     @foreach ($task->groups as $group)
                                         <tr>
-                                            <td class="px-5 py-3 font-medium text-gray-800">{{ $group->name }}</td>
-                                            <td class="px-5 py-3 text-gray-600">{{ $group->schoolClass?->name ?? '-' }}</td>
+                                            <td class="px-5 py-3 font-medium text-slate-800">{{ $group->name }}</td>
+                                            <td class="px-5 py-3 text-slate-600">{{ $group->schoolClass?->name ?? '-' }}</td>
                                             <td class="px-5 py-3">
                                                 <x-progress-bar :value="$group->pivot->progress" class="min-w-[120px]" />
                                             </td>

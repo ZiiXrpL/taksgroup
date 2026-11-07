@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\SchoolClass;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -53,7 +54,20 @@ class ProfileController extends Controller
             $user->class_id = $request->validated('class_id');
         }
 
-        $user->save();
+        if ($user->isSiswa() && $user->attendance_number === null && $request->filled('attendance_number')) {
+            $user->attendance_number = $request->validated('attendance_number');
+        }
+
+        try {
+            $user->save();
+        } catch (UniqueConstraintViolationException) {
+            // Dua siswa menyimpan nomor yang sama hampir bersamaan: validasi
+            // lolos untuk keduanya, tetapi unique(class_id, attendance_number)
+            // di database menolak yang kedua.
+            return back()
+                ->withInput($request->except(['password', 'password_confirmation', 'current_password']))
+                ->withErrors(['attendance_number' => 'Nomor absen ini sudah dipakai siswa lain di kelas yang sama.']);
+        }
 
         if (
             $oldProfilePhotoPath
@@ -62,6 +76,10 @@ class ProfileController extends Controller
             && ! Storage::disk('local')->delete($oldProfilePhotoPath)
         ) {
             throw new RuntimeException('Foto profil lama gagal dihapus.');
+        }
+
+        if ($user->isSiswa() && $user->wasChanged(['class_id', 'attendance_number']) && ! $user->needsClassProfile()) {
+            return redirect()->route('siswa.dashboard')->with('status', 'Profil berhasil disimpan. Selamat datang!');
         }
 
         return back()->with('status', 'Profil berhasil diperbarui.');

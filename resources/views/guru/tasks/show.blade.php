@@ -8,9 +8,6 @@
                     <p class="mt-1 text-sm text-slate-500">{{ $task->subject }}</p>
                 </div>
                 <div class="flex gap-2">
-                    <x-badge :color="\App\Models\Task::priorityColor($task->priority)">
-                        {{ \App\Models\Task::priorityLabel($task->priority) }}
-                    </x-badge>
                     <x-badge :color="\App\Models\Task::statusColor($task->status)">
                         {{ \App\Models\Task::statusLabel($task->status) }}
                     </x-badge>

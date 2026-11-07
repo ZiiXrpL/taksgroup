@@ -25,18 +25,9 @@
                 </x-select>
             </div>
 
-            <div class="w-full sm:w-40">
-                <x-select name="priority">
-                    <option value="">Semua Prioritas</option>
-                    @foreach (['low', 'medium', 'high'] as $value)
-                        <option value="{{ $value }}" @selected($priority === $value)>{{ \App\Models\Task::priorityLabel($value) }}</option>
-                    @endforeach
-                </x-select>
-            </div>
-
             <x-primary-button type="submit" class="shrink-0">Filter</x-primary-button>
 
-            @if ($search !== '' || $status !== '' || $priority !== '')
+            @if ($search !== '' || $status !== '')
                 <a href="{{ route('guru.tasks.index') }}" class="inline-flex items-center rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                     Reset
                 </a>

@@ -6,10 +6,10 @@
     // Aturan warna progress bar (spesifikasi bagian 10 & 24):
     // 0-39% merah, 40-69% kuning, 70-99% biru, 100% hijau.
     $barColor = match (true) {
-        $value >= 100 => 'bg-status-success',
-        $value >= 70 => 'bg-status-primary',
-        $value >= 40 => 'bg-status-warning',
-        default => 'bg-status-danger',
+        $value >= 100 => 'bg-gradient-to-r from-emerald-500 to-teal-400',
+        $value >= 70 => 'bg-gradient-to-r from-indigo-500 to-violet-500',
+        $value >= 40 => 'bg-gradient-to-r from-amber-500 to-yellow-400',
+        default => 'bg-gradient-to-r from-rose-500 to-orange-400',
     };
 @endphp
 
@@ -19,6 +19,6 @@
     </div>
 
     @if ($showLabel)
-        <span class="w-10 shrink-0 text-right text-xs font-semibold text-gray-600">{{ $value }}%</span>
+        <span class="w-10 shrink-0 text-right text-xs font-semibold text-slate-600">{{ $value }}%</span>
     @endif
 </div>

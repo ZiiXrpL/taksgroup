@@ -9,12 +9,12 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-white antialiased">
-    <div class="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 py-8 sm:px-6 lg:px-8">
-        <div class="pointer-events-none absolute -left-32 -top-32 h-80 w-80 rounded-full bg-blue-100/40 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-40 -right-32 h-96 w-96 rounded-full bg-indigo-100/40 blur-3xl"></div>
+<body class="min-h-screen bg-slate-950 font-sans antialiased">
+    <div class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8 sm:px-6 lg:px-8"
+        style="background: radial-gradient(60rem 36rem at 15% 0%, rgba(99,102,241,.35), transparent 60%), radial-gradient(50rem 30rem at 100% 100%, rgba(139,92,246,.28), transparent 60%), linear-gradient(180deg, #0b1120, #0f172a);">
+        <div class="pointer-events-none absolute inset-0 opacity-[0.07]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 44px 44px;"></div>
 
-        <main class="relative z-10 w-full">
+        <main class="fade-up relative z-10 w-full">
             {{ $slot }}
         </main>
     </div>

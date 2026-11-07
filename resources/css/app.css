@@ -1,14 +1,42 @@
 @import "tailwindcss";
 @source "../views/**/*.blade.php";
 
+/*
+ * ======================================================================
+ * TaskGroup design system - "Modern Education SaaS"
+ * ----------------------------------------------------------------------
+ * Satu sumber kebenaran untuk warna, tipografi, kartu, tombol, tabel,
+ * form, dan badge. View lama memakai utilitas `blue-*`; palet `blue`
+ * dipetakan ke indigo di bawah sehingga seluruh aplikasi otomatis
+ * berpindah ke identitas visual baru tanpa mengubah fungsi/markup.
+ * ======================================================================
+ */
 @theme {
-    /* Warna status - digunakan konsisten di seluruh aplikasi (lihat bagian 24 spesifikasi) */
-    --color-status-primary: #2563eb;   /* Blue */
-    --color-status-success: #16a34a;   /* Green */
-    --color-status-warning: #ca8a04;   /* Yellow */
-    --color-status-danger: #dc2626;    /* Red */
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Warna status - konsisten di seluruh aplikasi */
+    --color-status-primary: #4f46e5;   /* Indigo */
+    --color-status-success: #059669;   /* Emerald */
+    --color-status-warning: #d97706;   /* Amber */
+    --color-status-danger: #e11d48;    /* Rose */
     --color-status-info: #0891b2;      /* Cyan */
-    --color-status-neutral: #6b7280;   /* Gray */
+    --color-status-neutral: #64748b;   /* Slate */
+
+    /* Palet "blue" lama -> indigo (aksen utama brand) */
+    --color-blue-50: #eef2ff;
+    --color-blue-100: #e0e7ff;
+    --color-blue-200: #c7d2fe;
+    --color-blue-300: #a5b4fc;
+    --color-blue-400: #818cf8;
+    --color-blue-500: #6366f1;
+    --color-blue-600: #4f46e5;
+    --color-blue-700: #4338ca;
+    --color-blue-800: #3730a3;
+    --color-blue-900: #312e81;
+
+    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
+    --shadow-card-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 16px 36px -10px rgba(79, 70, 229, 0.18);
+    --shadow-glow: 0 8px 24px -6px rgba(79, 70, 229, 0.45);
 }
 
 @layer base {
@@ -16,11 +44,16 @@
         color-scheme: light;
     }
 
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
     body {
-        @apply bg-slate-50 text-slate-900 antialiased;
-        background-image: radial-gradient(circle at top left, rgba(14, 165, 233, 0.07), transparent 28%),
-            radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.05), transparent 32%),
-            linear-gradient(to bottom, #f8fafc, #f1f5f9);
+        @apply bg-slate-50 font-sans text-slate-900 antialiased;
+        background-image:
+            radial-gradient(60rem 30rem at 100% -10%, rgba(99, 102, 241, 0.08), transparent 60%),
+            radial-gradient(40rem 24rem at -10% 110%, rgba(14, 165, 233, 0.06), transparent 60%);
+        background-attachment: fixed;
     }
 
     ::selection {
@@ -33,17 +66,91 @@
     }
 
     :focus-visible {
-        outline: 2px solid #2563eb;
+        outline: 2px solid #6366f1;
         outline-offset: 2px;
+    }
+
+    /* Input yang mudah disentuh di HP; 16px mencegah zoom otomatis iOS */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    select,
+    textarea {
+        @media (max-width: 639px) {
+            font-size: 16px;
+        }
+    }
+
+    img {
+        max-width: 100%;
     }
 }
 
 @utility panel-card {
-    @apply rounded-2xl border border-slate-200/80 bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.04)] backdrop-blur-sm transition-all duration-200;
+    @apply rounded-2xl border border-slate-200/70 bg-white shadow-card transition-all duration-200;
 
     &:hover {
-        @apply shadow-[0_14px_36px_rgba(59,130,246,0.08)];
+        @apply -translate-y-1 border-indigo-100 shadow-card-hover;
     }
+}
+
+/* Efek hover eksplisit untuk elemen kartu yang tidak memakai panel-card */
+@utility card-hover {
+    transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-card-hover);
+    }
+}
+
+/* Efek animasi tombol: lift + press + kilau (sheen) saat hover */
+@utility btn-animate {
+    position: relative;
+    overflow: hidden;
+    transition: transform .18s ease, box-shadow .22s ease, background-color .18s ease,
+        border-color .18s ease, color .18s ease;
+    will-change: transform;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(.97);
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 55%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .38), transparent);
+        transform: translateX(-130%) skewX(-18deg);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover::after {
+        opacity: 1;
+        animation: btn-sheen .7s ease;
+    }
+}
+
+/* Skeleton shimmer untuk status loading */
+@utility skeleton {
+    overflow: hidden;
+    background: linear-gradient(90deg, #e8edf4 25%, #f6f8fb 50%, #e8edf4 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    border-radius: .5rem;
+}
+
+@utility skeleton-text {
+    height: .875rem;
+    border-radius: .375rem;
+}
+
+@utility skeleton-circle {
+    border-radius: 9999px;
 }
 
 @layer components {
@@ -57,8 +164,14 @@
         aspect-ratio: 1 / 1;
     }
 
+    /* ---------- Kartu statistik ---------- */
     .stat-card {
-        @apply panel-card p-4 sm:p-5;
+        @apply panel-card relative overflow-hidden p-4 sm:p-5;
+    }
+
+    .stat-card::after {
+        content: "";
+        @apply pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-indigo-500/5;
     }
 
     .stat-card .label {
@@ -69,12 +182,34 @@
         @apply mt-2 text-2xl font-bold tracking-tight text-slate-900;
     }
 
+    /* ---------- Kartu & panel lama (markup existing) ---------- */
+    .rounded-2xl.border.bg-white,
     .rounded-xl.border.border-gray-200.bg-white {
-        @apply border-slate-200/80 shadow-sm transition-shadow duration-200;
+        @apply border-slate-200/70 shadow-card;
+        transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease;
     }
 
+    .rounded-2xl.border.bg-white:hover,
     .rounded-xl.border.border-gray-200.bg-white:hover {
-        @apply shadow-md;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-card-hover);
+    }
+
+    /* ---------- Hero banner dashboard ---------- */
+    .hero-card {
+        @apply relative overflow-hidden rounded-3xl text-white shadow-glow;
+        background:
+            radial-gradient(28rem 14rem at 100% 0%, rgba(255, 255, 255, 0.18), transparent 60%),
+            linear-gradient(135deg, #4338ca 0%, #6d28d9 60%, #7c3aed 100%);
+    }
+
+    /* ---------- Tabel ---------- */
+    table {
+        @apply w-full;
+    }
+
+    table thead th {
+        @apply whitespace-nowrap;
     }
 
     table tbody tr {
@@ -82,15 +217,75 @@
     }
 
     table tbody tr:hover {
-        @apply bg-blue-50/40;
+        @apply bg-indigo-50/40;
+    }
+
+    /* ---------- Form ---------- */
+    input[type="checkbox"],
+    input[type="radio"] {
+        @apply border-slate-300 text-indigo-600 focus:ring-indigo-500;
+    }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar-surface {
+        background:
+            radial-gradient(24rem 16rem at 0% 0%, rgba(99, 102, 241, 0.28), transparent 60%),
+            linear-gradient(180deg, #0b1120 0%, #0f172a 100%);
+    }
+
+    .nav-section-title {
+        @apply px-3 pb-2 pt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500;
+    }
+
+    /* ---------- Animasi ringan ---------- */
+    .fade-up {
+        animation: fade-up 0.35s ease-out both;
+    }
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Kilau tombol saat hover (btn-animate) */
+@keyframes btn-sheen {
+    0% {
+        transform: translateX(-130%) skewX(-18deg);
+    }
+    100% {
+        transform: translateX(230%) skewX(-18deg);
+    }
+}
+
+/* Geser highlight skeleton (skeleton) */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
     }
 }
 
 /*
  * Mencegah "flash of unstyled content" pada elemen yang visibilitas
- * awalnya dikontrol Alpine (x-show/x-cloak), mis. overlay & sidebar
- * drawer mobile pada components/layouts/app.blade.php. Tanpa ini,
- * elemen akan sempat tampil sekilas sebelum Alpine selesai load.
+ * awalnya dikontrol Alpine (x-show/x-cloak).
  */
 [x-cloak] {
     display: none !important;

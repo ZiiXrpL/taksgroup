@@ -12,12 +12,12 @@
 <x-layouts.app title="Dashboard Guru" role="guru">
     <div class="space-y-6">
 
-        <div class="panel-card flex flex-wrap items-center justify-between gap-3 p-4 sm:p-6">
+        <div class="hero-card flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
             <div class="min-w-0">
-                <h3 class="text-xl font-bold tracking-tight text-slate-900">Halo, {{ $user->name }} 👋</h3>
-                <p class="mt-1 text-sm text-slate-500">Ringkasan tugas kelompok dan individu Anda.</p>
+                <h3 class="text-xl font-bold tracking-tight text-white">Halo, {{ $user->name }} 👋</h3>
+                <p class="mt-1 text-sm text-indigo-100">Ringkasan tugas kelompok dan individu Anda.</p>
             </div>
-            <span class="hidden shrink-0 items-center rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700 sm:inline-flex">Sistem Stabil</span>
+            <span class="hidden shrink-0 items-center rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/20 sm:inline-flex">Sistem Stabil</span>
         </div>
 
         {{-- Kartu statistik --}}

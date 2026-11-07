@@ -18,7 +18,7 @@
         </div>
 
         @if ($notifications->isEmpty())
-            <div class="rounded-2xl border border-slate-100 bg-white px-6 py-10 text-center text-sm text-slate-400 shadow-sm">
+            <div class="panel-card px-6 py-10 text-center text-sm text-slate-400">
                 Belum ada notifikasi.
             </div>
         @else
@@ -34,7 +34,7 @@
                             default => ['bg' => 'bg-slate-100 text-slate-500', 'icon' => 'M4 6h16M4 12h10M4 18h16'],
                         };
                     @endphp
-                    <div class="overflow-hidden rounded-2xl border {{ $notification->read_at ? 'border-slate-100 bg-white' : 'border-blue-100 bg-white' }} shadow-sm">
+                    <div class="panel-card overflow-hidden {{ $notification->read_at ? '' : 'ring-1 ring-blue-100' }}">
                         <form method="POST" action="{{ route('notifications.read', $notification) }}">
                             @csrf
                             @method('PATCH')

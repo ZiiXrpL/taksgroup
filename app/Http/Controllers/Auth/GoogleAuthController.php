@@ -80,7 +80,7 @@ class GoogleAuthController extends Controller
         Auth::login($user, true);
         request()->session()->regenerate();
 
-        if ($user->isSiswa() && $user->class_id === null) {
+        if ($user->needsClassProfile()) {
             return redirect()->route('profile.edit');
         }
 

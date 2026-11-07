@@ -10,38 +10,49 @@
 <x-layouts.app title="Dashboard Siswa" role="siswa">
     <div class="space-y-6">
 
-        <div class="panel-card flex flex-wrap items-center justify-between gap-3 p-4 sm:p-6">
+        <div class="hero-card flex flex-wrap items-center justify-between gap-3 p-5 sm:p-7">
             <div class="min-w-0">
-                <h3 class="text-xl font-bold tracking-tight text-slate-900">Halo, {{ explode(' ', $user->name)[0] }} 👋</h3>
+                <h3 class="text-xl font-bold tracking-tight text-white">Halo, {{ explode(' ', $user->name)[0] }} 👋</h3>
 
                 @if ($group)
-                    <p class="mt-1 text-sm text-slate-500">
-                        Kelompok: <span class="font-medium text-slate-700">{{ $group->name }}</span>
-                        <span class="text-slate-300">&middot;</span>
+                    <p class="mt-1 text-sm text-indigo-100">
+                        Kelompok: <span class="font-medium text-white">{{ $group->name }}</span>
+                        <span class="text-indigo-300">&middot;</span>
                         {{ $group->schoolClass->name }}
                     </p>
                 @else
-                    <p class="mt-1 text-sm text-slate-500">
+                    <p class="mt-1 text-sm text-indigo-100">
                         Anda belum tergabung di kelompok manapun. Hubungi admin atau guru Anda.
                     </p>
                 @endif
             </div>
-            <span class="hidden shrink-0 items-center rounded-full bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700 sm:inline-flex">Sistem Stabil</span>
+            <span class="hidden shrink-0 items-center rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/20 sm:inline-flex">Sistem Stabil</span>
         </div>
 
-        {{-- Kartu statistik --}}
-        <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            @foreach ($statCards as $card)
-                <div class="stat-card">
-                    <p class="label">{{ $card['label'] }}</p>
-                    <div class="mt-2 flex items-center gap-2">
-                        <p class="value {{ $card['color'] }}">{{ $card['value'] }}</p>
-                        @isset($card['dot'])
-                            <span class="h-2.5 w-2.5 rounded-full {{ $card['dot'] }}"></span>
-                        @endisset
+        {{-- Kartu statistik (skeleton shimmer saat loading) --}}
+        <div class="relative" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 700)">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4" :class="loading && 'invisible'">
+                @foreach ($statCards as $card)
+                    <div class="stat-card">
+                        <p class="label">{{ $card['label'] }}</p>
+                        <div class="mt-2 flex items-center gap-2">
+                            <p class="value {{ $card['color'] }}">{{ $card['value'] }}</p>
+                            @isset($card['dot'])
+                                <span class="h-2.5 w-2.5 rounded-full {{ $card['dot'] }}"></span>
+                            @endisset
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+
+            <div x-show="loading" x-cloak class="absolute inset-0 grid grid-cols-2 gap-4 sm:grid-cols-4" aria-hidden="true">
+                @foreach (range(1, 4) as $i)
+                    <div class="stat-card">
+                        <x-skeleton class="skeleton-text w-20" />
+                        <x-skeleton class="mt-3 h-7 w-12" />
+                    </div>
+                @endforeach
+            </div>
         </div>
 
         <section class="panel-card p-4 sm:p-6">

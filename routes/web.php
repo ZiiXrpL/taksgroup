@@ -12,6 +12,7 @@ use App\Http\Controllers\FileDownloadController;
 use App\Http\Controllers\Guru\AssessmentController as GuruAssessmentController;
 use App\Http\Controllers\Guru\CommentController as GuruCommentController;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboardController;
+use App\Http\Controllers\Guru\GroupController as GuruGroupController;
 use App\Http\Controllers\Guru\MonitoringController as GuruMonitoringController;
 use App\Http\Controllers\Guru\ReportController as GuruReportController;
 use App\Http\Controllers\Guru\TaskController as GuruTaskController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Siswa\CommentController as SiswaCommentController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\FileController as SiswaFileController;
+use App\Http\Controllers\Siswa\LeaderboardController as SiswaLeaderboardController;
 use App\Http\Controllers\Siswa\TaskController as SiswaTaskController;
 use App\Models\SubtaskCompletion;
 use App\Models\User;
@@ -115,6 +117,23 @@ Route::middleware(['auth', 'role:' . User::ROLE_GURU])
     ->group(function () {
         Route::get('dashboard', [GuruDashboardController::class, 'index'])->name('dashboard');
 
+        // Bagian 1: manajemen kelompok oleh guru, dibatasi pada kelas yang
+        // menjadi tanggung jawabnya (relasi teacher_classes). Guru yang
+        // mengakses kelompok di luar kewenangannya mendapat 404.
+        Route::resource('kelompok', GuruGroupController::class)
+            ->parameters(['kelompok' => 'group'])
+            ->names('groups')
+            ->except(['show']);
+
+        Route::patch('kelompok/{group}/ketua', [GuruGroupController::class, 'setLeader'])
+            ->name('groups.set-leader');
+
+        Route::post('kelompok/{group}/anggota', [GuruGroupController::class, 'addMember'])
+            ->name('groups.members.store');
+
+        Route::delete('kelompok/{group}/anggota/{member}', [GuruGroupController::class, 'removeMember'])
+            ->name('groups.members.destroy');
+
         // Tahap 9: guru membuat & mengelola tugas miliknya sendiri, lalu
         // memberikannya ke satu atau beberapa kelompok sekaligus (TaskPolicy
         // memastikan guru tidak bisa mengakses tugas guru lain).
@@ -180,6 +199,9 @@ Route::middleware(['auth', 'role:' . User::ROLE_SISWA])
     ->name('siswa.')
     ->group(function () {
         Route::get('dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
+
+        // Bagian 6: leaderboard individual & kelompok, dibatasi kelas siswa.
+        Route::get('leaderboard', [SiswaLeaderboardController::class, 'index'])->name('leaderboard.index');
 
         // Tahap 11 & 12: siswa melihat tugas kelompoknya, menandai
         // checklist selesai, dan mengupload file hasil tugas (Tahap 14).

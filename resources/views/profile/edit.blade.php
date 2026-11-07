@@ -38,6 +38,12 @@
                     <x-input-error :messages="$errors->get('email')" />
                 </div>
 
+                @if ($user->needsClassProfile())
+                    <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                        Lengkapi kelas dan nomor absen Anda untuk melanjutkan ke dashboard siswa.
+                    </div>
+                @endif
+
                 @if ($user->isSiswa())
                     <div>
                         <x-label for="class_id" value="Kelas dan Jurusan" />
@@ -54,6 +60,18 @@
                             </select>
                         @endif
                         <x-input-error :messages="$errors->get('class_id')" />
+                    </div>
+
+                    <div>
+                        <x-label for="attendance_number" value="Nomor Absen" />
+                        @if ($user->attendance_number !== null)
+                            <x-input id="attendance_number" type="text" value="{{ $user->attendanceLabel() }}" disabled />
+                            <p class="mt-1 text-xs text-slate-500">Nomor absen hanya dapat diubah oleh admin.</p>
+                        @else
+                            <x-input id="attendance_number" name="attendance_number" type="number" min="1" max="99" inputmode="numeric" value="{{ old('attendance_number') }}" placeholder="Contoh: 03" required />
+                            <p class="mt-1 text-xs text-slate-500">Angka positif, unik di dalam kelas Anda. Contoh: 03.</p>
+                        @endif
+                        <x-input-error :messages="$errors->get('attendance_number')" />
                     </div>
                 @endif
 
@@ -81,7 +99,7 @@
                 </div>
 
                 <div class="flex justify-end pt-2">
-                    <x-primary-button>Simpan Perubahan</x-primary-button>
+                    <x-primary-button>{{ $user->needsClassProfile() ? 'Simpan dan Lanjutkan' : 'Simpan Perubahan' }}</x-primary-button>
                 </div>
             </form>
         </div>

@@ -21,6 +21,27 @@
                     <x-input-error :messages="$errors->get('email')" />
                 </div>
 
+                <div class="grid gap-5 sm:grid-cols-3">
+                    <div class="sm:col-span-2">
+                        <x-label for="class_id" value="Kelas" />
+                        <x-select id="class_id" name="class_id">
+                            <option value="">Belum ada kelas</option>
+                            @foreach ($classes as $schoolClass)
+                                <option value="{{ $schoolClass->id }}" @selected((string) old('class_id') === (string) $schoolClass->id)>
+                                    {{ $schoolClass->name }} · {{ $schoolClass->major ?? 'Tanpa jurusan' }} · {{ $schoolClass->academic_year }}
+                                </option>
+                            @endforeach
+                        </x-select>
+                        <x-input-error :messages="$errors->get('class_id')" />
+                    </div>
+
+                    <div>
+                        <x-label for="attendance_number" value="Nomor Absen" />
+                        <x-input id="attendance_number" name="attendance_number" type="number" min="1" max="99" inputmode="numeric" value="{{ old('attendance_number') }}" placeholder="03" />
+                        <x-input-error :messages="$errors->get('attendance_number')" />
+                    </div>
+                </div>
+
                 <div>
                     <x-label for="password" value="Password" />
                     <x-input id="password" name="password" type="password" required autocomplete="new-password" />

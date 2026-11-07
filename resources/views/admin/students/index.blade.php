@@ -11,9 +11,19 @@
             </a>
         </div>
 
-        <form method="GET" action="{{ route('admin.students.index') }}" class="flex w-full max-w-sm gap-2">
-            <x-input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau email..." />
-            <x-primary-button type="submit" class="shrink-0">Cari</x-primary-button>
+        <form method="GET" action="{{ route('admin.students.index') }}" class="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <x-input type="text" name="search" value="{{ $search }}" placeholder="Cari nama atau email..." class="sm:max-w-xs" />
+            <x-select name="class_id" class="sm:max-w-xs">
+                <option value="">Semua kelas</option>
+                @foreach ($classes as $schoolClass)
+                    <option value="{{ $schoolClass->id }}" @selected((int) $classFilter === $schoolClass->id)>{{ $schoolClass->name }} · {{ $schoolClass->academic_year }}</option>
+                @endforeach
+            </x-select>
+            <label class="flex items-center gap-2 text-sm text-slate-600">
+                <input type="checkbox" name="tanpa_absen" value="1" @checked($missingNumber) class="rounded border-slate-300 text-blue-600">
+                Belum punya nomor absen
+            </label>
+            <x-primary-button type="submit" class="shrink-0">Terapkan</x-primary-button>
         </form>
 
         <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
@@ -22,7 +32,9 @@
                     <thead class="bg-slate-50">
                         <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                             <th class="px-5 py-3">No</th>
+                            <th class="px-5 py-3">Absen</th>
                             <th class="px-5 py-3">Nama Siswa</th>
+                            <th class="px-5 py-3">Kelas</th>
                             <th class="px-5 py-3">Email</th>
                             <th class="px-5 py-3">Jumlah Kelompok</th>
                             <th class="px-5 py-3">Aksi</th>
@@ -32,7 +44,9 @@
                         @forelse ($students as $student)
                             <tr>
                                 <td class="px-5 py-4 text-slate-400">{{ $loop->iteration + ($students->currentPage() - 1) * $students->perPage() }}</td>
+                                <td class="px-5 py-4 font-mono font-semibold text-slate-700">{{ $student->attendanceLabel() }}</td>
                                 <td class="px-5 py-4 font-semibold text-slate-800">{{ $student->name }}</td>
+                                <td class="px-5 py-4 text-slate-500">{{ $student->schoolClass?->name ?? '-' }}</td>
                                 <td class="px-5 py-4 text-slate-500">{{ $student->email }}</td>
                                 <td class="px-5 py-4"><x-badge color="blue">{{ $student->groups_count }} kelompok</x-badge></td>
                                 <td class="px-5 py-4">
@@ -50,7 +64,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-5 py-8 text-center text-slate-400">Belum ada data siswa.</td>
+                                <td colspan="7" class="px-5 py-8 text-center text-slate-400">Belum ada data siswa.</td>
                             </tr>
                         @endforelse
                     </tbody>

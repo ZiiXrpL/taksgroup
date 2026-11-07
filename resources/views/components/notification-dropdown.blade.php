@@ -8,7 +8,7 @@
         @click="open = !open"
         @click.outside="open = false"
         type="button"
-        class="relative rounded-xl p-2.5 text-gray-500 transition hover:bg-gray-100"
+        class="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
         aria-label="Notifikasi"
     >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -26,7 +26,7 @@
         x-cloak
         x-show="open"
         x-transition
-        class="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl sm:right-0"
+        class="absolute right-0 z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:right-0"
     >
         <div class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
             <p class="text-sm font-semibold text-gray-900">Notifikasi</p>

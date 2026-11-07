@@ -46,6 +46,7 @@
                 <table class="min-w-full divide-y divide-slate-100 text-sm">
                     <thead class="bg-slate-50">
                         <tr class="text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                            <th class="px-4 py-2.5">Absen</th>
                             <th class="px-4 py-2.5">Nama</th>
                             <th class="px-4 py-2.5">Peran</th>
                             <th class="px-4 py-2.5 text-right">Aksi</th>
@@ -54,6 +55,7 @@
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($group->members as $member)
                             <tr>
+                                <td class="px-4 py-2.5 font-mono font-semibold text-slate-700">{{ $member->attendanceLabel() }}</td>
                                 <td class="px-4 py-2.5 font-semibold text-slate-800">{{ $member->name }}</td>
                                 <td class="px-4 py-2.5">
                                     @if ($member->pivot->role === \App\Models\GroupMember::ROLE_LEADER)
@@ -86,7 +88,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" class="px-4 py-6 text-center text-slate-400">Belum ada anggota di kelompok ini.</td>
+                                <td colspan="4" class="px-4 py-6 text-center text-slate-400">Belum ada anggota di kelompok ini.</td>
                             </tr>
                         @endforelse
                     </tbody>

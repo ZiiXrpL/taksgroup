@@ -19,29 +19,36 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
-<body class="h-full bg-white antialiased" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
-    <div class="flex min-h-screen bg-white">
+<body class="h-full bg-slate-50 font-sans antialiased" x-data="{ sidebarOpen: false }" @keydown.escape.window="sidebarOpen = false">
+    <div class="min-h-screen">
 
-        {{-- Sidebar: drawer tersembunyi secara default, tampil saat tombol menu diklik (semua ukuran layar) --}}
+        {{-- Overlay drawer (khusus layar kecil) --}}
+        <div x-cloak x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-slate-950/60 backdrop-blur-sm lg:hidden" aria-hidden="true"></div>
+
+        {{-- Sidebar: permanen di desktop (lg+), drawer di tablet/HP --}}
         <aside
             x-cloak
-            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
             id="app-sidebar"
-            class="fixed inset-y-0 left-0 z-40 flex w-[min(85vw,17rem)] flex-col border-r border-slate-200 bg-white shadow-xl shadow-slate-200/40
-                transition-transform duration-200 ease-out"
+            class="sidebar-surface fixed inset-y-0 left-0 z-40 flex w-[min(85vw,18rem)] flex-col border-r border-white/5 text-slate-300 shadow-2xl shadow-slate-950/40 transition-transform duration-200 ease-out lg:w-72"
         >
-            <div class="flex h-20 items-center gap-3 border-b border-slate-100 px-5">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-status-primary text-sm font-bold text-white shadow-md shadow-blue-200">
-                    TG
+            <div class="flex h-16 shrink-0 items-center justify-between gap-3 px-5 sm:h-20">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-sm font-extrabold text-white shadow-glow">
+                        TG
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold leading-tight text-white">TaskGroup</p>
+                        <p class="text-[10px] font-semibold uppercase leading-tight tracking-[0.16em] text-slate-400">Education Platform</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-sm font-bold leading-tight text-slate-900">TaskGroup</p>
-                    <p class="text-[11px] font-medium uppercase tracking-wide leading-tight text-slate-400">Sistem Akademik</p>
-                </div>
+                <button type="button" @click="sidebarOpen = false" class="rounded-lg p-2 text-slate-400 transition hover:bg-white/10 hover:text-white lg:hidden" aria-label="Tutup menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
             </div>
 
-            <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-4" aria-label="Menu utama" @click="if ($event.target.closest('a')) sidebarOpen = false">
-                <p class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Menu {{ $roleLabel }}</p>
+            <nav class="flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Menu utama" @click="if ($event.target.closest('a')) sidebarOpen = false">
+                <p class="nav-section-title">Menu {{ $roleLabel }}</p>
                 <x-nav-link :href="route($role.'.dashboard')" :active="request()->routeIs($role.'.dashboard')">
                     <x-slot:icon>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/></svg>
@@ -94,6 +101,15 @@
                     </x-nav-link>
                 @endif
 
+                @if (Route::has($role.'.leaderboard.index'))
+                    <x-nav-link :href="route($role.'.leaderboard.index')" :active="request()->routeIs($role.'.leaderboard.*')">
+                        <x-slot:icon>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 21h8m-4-4v4m-5-18h10v5a5 5 0 01-10 0V3zM7 5H4v1a3 3 0 003 3m10-4h3v1a3 3 0 01-3 3"/></svg>
+                        </x-slot:icon>
+                        Leaderboard
+                    </x-nav-link>
+                @endif
+
                 @if (Route::has($role.'.monitoring.index'))
                     <x-nav-link :href="route($role.'.monitoring.index')" :active="request()->routeIs($role.'.monitoring.*')">
                         <x-slot:icon>
@@ -121,7 +137,7 @@
                     </x-nav-link>
                 @endif
 
-                <div class="my-4 border-t border-slate-100"></div>
+                <p class="nav-section-title">Akun</p>
 
                 <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                     <x-slot:icon>
@@ -131,10 +147,23 @@
                 </x-nav-link>
             </nav>
 
-            <div class="border-t border-slate-100 p-3">
+            <div class="shrink-0 border-t border-white/10 p-3">
+                <div class="mb-2 flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2.5">
+                    @if (auth()->user()->profile_photo_path)
+                        <img src="{{ route('profile.photo') }}" alt="" class="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-white/10">
+                    @else
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-500/80 text-xs font-semibold text-white">
+                            {{ collect(explode(' ', auth()->user()->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->take(2)->implode('') }}
+                        </div>
+                    @endif
+                    <div class="min-w-0">
+                        <p class="truncate text-sm font-semibold text-white">{{ auth()->user()->name }}</p>
+                        <p class="text-[11px] text-slate-400">{{ $roleLabel }}</p>
+                    </div>
+                </div>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-status-danger transition hover:bg-red-50">
+                    <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-300 transition hover:bg-rose-500/10 hover:text-rose-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m0-9H5a2 2 0 00-2 2v14a2 2 0 002 2h2"/></svg>
                         Keluar
                     </button>
@@ -142,37 +171,53 @@
             </div>
         </aside>
 
-        {{-- Konten utama --}}
-        <div class="flex min-w-0 flex-1 flex-col">
+        {{-- Konten utama (digeser selebar sidebar permanen di desktop) --}}
+        <div class="flex min-h-screen min-w-0 flex-col lg:pl-72">
             {{-- Topbar --}}
-            <header class="relative z-50 flex h-16 items-center justify-between gap-3 border-b border-slate-200/80 bg-white/90 px-3 shadow-sm backdrop-blur sm:h-20 sm:px-4 lg:px-8">
+            <header class="sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-slate-200/70 bg-white/80 px-3 backdrop-blur-xl sm:h-20 sm:px-4 lg:px-8">
                 <div class="flex min-w-0 items-center gap-2 sm:gap-3">
-                    <button @click="sidebarOpen = ! sidebarOpen" :aria-expanded="sidebarOpen" aria-controls="app-sidebar" class="shrink-0 rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-status-primary" aria-label="Buka menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <button @click="sidebarOpen = ! sidebarOpen" :aria-expanded="sidebarOpen" aria-controls="app-sidebar" class="shrink-0 rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 lg:hidden" aria-label="Buka menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2zm0 4h14a1 1 0 010 2H3a1 1 0 010-2z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <h2 class="truncate text-xl font-bold tracking-tight text-slate-900">{{ $title }}</h2>
+                    <div class="min-w-0">
+                        <h2 class="truncate text-lg font-bold tracking-tight text-slate-900 sm:text-xl">{{ $title }}</h2>
+                        <p class="hidden text-xs text-slate-400 sm:block">{{ $roleLabel }} &middot; {{ now()->translatedFormat('l, d F Y') }}</p>
+                    </div>
                 </div>
 
-                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                <div class="flex shrink-0 items-center gap-1 sm:gap-2">
                     <x-notification-dropdown />
 
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-semibold text-slate-900">{{ auth()->user()->name }}</p>
-                        <p class="text-xs capitalize text-slate-400">{{ auth()->user()->role }}</p>
-                    </div>
-                    @if (auth()->user()->profile_photo_path)
-                        <img src="{{ route('profile.photo') }}" alt="Foto profil {{ auth()->user()->name }}" class="h-9 w-9 shrink-0 rounded-full object-cover shadow-md shadow-blue-200 sm:h-10 sm:w-10">
-                    @else
-                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-status-primary text-xs font-semibold text-white shadow-md shadow-blue-200 sm:h-10 sm:w-10 sm:text-sm">
-                            {{ collect(explode(' ', auth()->user()->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->take(2)->implode('') }}
+                    {{-- Menu pengguna --}}
+                    <div x-data="{ open: false }" class="relative">
+                        <button type="button" @click="open = ! open" @click.outside="open = false" class="flex items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100 sm:pr-3" aria-label="Menu pengguna" :aria-expanded="open">
+                            @if (auth()->user()->profile_photo_path)
+                                <img src="{{ route('profile.photo') }}" alt="Foto profil {{ auth()->user()->name }}" class="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-indigo-100 sm:h-10 sm:w-10">
+                            @else
+                                <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 text-xs font-semibold text-white shadow-md shadow-indigo-200 sm:h-10 sm:w-10 sm:text-sm">
+                                    {{ collect(explode(' ', auth()->user()->name))->map(fn($w) => strtoupper(substr($w, 0, 1)))->take(2)->implode('') }}
+                                </div>
+                            @endif
+                            <div class="hidden text-left sm:block">
+                                <p class="max-w-[10rem] truncate text-sm font-semibold leading-tight text-slate-900">{{ auth()->user()->name }}</p>
+                                <p class="text-xs capitalize leading-tight text-slate-400">{{ auth()->user()->role }}</p>
+                            </div>
+                        </button>
+
+                        <div x-cloak x-show="open" x-transition class="absolute right-0 z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-xl">
+                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50">Profil Saya</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-600 transition hover:bg-rose-50">Keluar</button>
+                            </form>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden bg-slate-50 px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
+            <main class="fade-up flex-1 overflow-x-hidden px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
                 <div class="mx-auto w-full max-w-screen-2xl">
                     @if (session('status'))
                         <x-alert type="success" class="mb-4">{{ session('status') }}</x-alert>

@@ -5,7 +5,7 @@
                 <div>
                     <p class="text-xs font-semibold uppercase text-slate-400">Review individu</p>
                     <h3 class="mt-1 text-xl font-bold text-slate-900">{{ $student->name }}</h3>
-                    <p class="mt-1 text-sm text-slate-500">{{ $student->email }} · {{ $task->title }}</p>
+                    <p class="mt-1 text-sm text-slate-500">{{ $student->email }} · Nomor absen {{ $student->attendanceLabel() }} · {{ $task->title }}</p>
                 </div>
                 <x-badge :color="\App\Models\TaskGroup::statusColor($assignment->status)">{{ \App\Models\TaskGroup::statusLabel($assignment->status) }}</x-badge>
             </div>

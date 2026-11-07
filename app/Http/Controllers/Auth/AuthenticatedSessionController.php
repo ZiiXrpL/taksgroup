@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (Auth::user()->role === User::ROLE_SISWA && Auth::user()->class_id === null) {
+        if (Auth::user()->needsClassProfile()) {
             return redirect()->route('profile.edit');
         }
 
@@ -54,7 +54,7 @@ class AuthenticatedSessionController extends Controller
      */
     private function redirectPathForRole(User $user): string
     {
-        if ($user->isSiswa() && $user->class_id === null) {
+        if ($user->needsClassProfile()) {
             return route('profile.edit');
         }
 

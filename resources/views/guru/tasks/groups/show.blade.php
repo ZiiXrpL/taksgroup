@@ -25,7 +25,7 @@
 
             <div class="mt-4 flex flex-wrap gap-1.5">
                 @foreach ($group->members as $member)
-                    <x-badge color="gray">{{ $member->name }}</x-badge>
+                    <x-badge color="gray">{{ $member->name }} · {{ $member->attendanceLabel() }}</x-badge>
                 @endforeach
             </div>
 

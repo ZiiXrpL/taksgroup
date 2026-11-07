@@ -10,7 +10,11 @@ class EnsureStudentHasClass
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->isSiswa() && $request->user()->class_id === null) {
+        // Siswa wajib punya kelas DAN nomor absen. Siswa lama yang sudah
+        // punya class_id tetapi belum punya nomor absen diarahkan ke profil
+        // untuk melengkapinya (rute profil berada di luar grup siswa,
+        // sehingga tidak terjadi redirect berulang).
+        if ($request->user()?->needsClassProfile()) {
             return redirect()->route('profile.edit');
         }
 

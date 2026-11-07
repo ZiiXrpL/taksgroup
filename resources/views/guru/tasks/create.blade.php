@@ -26,22 +26,10 @@
                 <x-input-error :messages="$errors->get('description')" />
             </div>
 
-            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div>
-                    <x-label for="subject" value="Mata Pelajaran" />
-                    <x-input id="subject" name="subject" type="text" value="{{ old('subject') }}" required />
-                    <x-input-error :messages="$errors->get('subject')" />
-                </div>
-
-                <div>
-                    <x-label for="priority" value="Prioritas" />
-                    <x-select id="priority" name="priority" required>
-                        @foreach (['low' => 'Rendah', 'medium' => 'Sedang', 'high' => 'Tinggi'] as $value => $label)
-                            <option value="{{ $value }}" @selected(old('priority', 'medium') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </x-select>
-                    <x-input-error :messages="$errors->get('priority')" />
-                </div>
+            <div>
+                <x-label for="subject" value="Mata Pelajaran" />
+                <x-input id="subject" name="subject" type="text" value="{{ old('subject') }}" required />
+                <x-input-error :messages="$errors->get('subject')" />
             </div>
 
             <div>

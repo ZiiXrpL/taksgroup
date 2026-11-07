@@ -36,6 +36,17 @@
                     <x-input-error :messages="$errors->get('academic_year')" />
                 </div>
 
+                <div>
+                    <x-label for="teacher_ids" value="Guru Pengampu (opsional)" />
+                    <select id="teacher_ids" name="teacher_ids[]" multiple size="4" class="block w-full rounded-xl border-slate-300 text-sm shadow-sm focus:border-status-primary focus:ring-status-primary">
+                        @foreach ($teachers as $teacher)
+                            <option value="{{ $teacher->id }}" @selected(in_array($teacher->id, old('teacher_ids', $selectedTeachers ?? []), true))>{{ $teacher->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-xs text-slate-500">Gunakan Ctrl/Cmd untuk memilih lebih dari satu guru. Guru terpilih boleh mengelola kelompok di kelas ini.</p>
+                    <x-input-error :messages="$errors->get('teacher_ids.*')" />
+                </div>
+
                 <div class="flex justify-end gap-3 pt-2">
                     <a href="{{ route('admin.classes.index') }}" class="inline-flex items-center rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
                         Batal

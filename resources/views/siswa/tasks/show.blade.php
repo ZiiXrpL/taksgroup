@@ -126,25 +126,50 @@
                                                 action="{{ route('siswa.tasks.checklist.submit-proof', [$task, $subtask]) }}"
                                                 enctype="multipart/form-data"
                                                 class="mt-3"
+                                                x-data="{
+                                                    fileName: '',
+                                                    error: '',
+                                                    allowed: @json(\App\Support\UploadRules::EXTENSIONS),
+                                                    maxBytes: @json(\App\Support\UploadRules::MAX_BYTES),
+                                                    check(file) {
+                                                        if (!file) { this.fileName = ''; this.error = ''; return; }
+                                                        const ext = (file.name.split('.').pop() || '').toLowerCase();
+                                                        if (file.size > this.maxBytes) {
+                                                            this.error = 'Ukuran file maksimal 5 MB.';
+                                                            this.fileName = '';
+                                                            this.$refs.proofInput.value = '';
+                                                            return;
+                                                        }
+                                                        if (!this.allowed.includes(ext)) {
+                                                            this.error = 'Format file tidak didukung.';
+                                                            this.fileName = '';
+                                                            this.$refs.proofInput.value = '';
+                                                            return;
+                                                        }
+                                                        this.error = '';
+                                                        this.fileName = file.name;
+                                                    }
+                                                }"
                                             >
                                                 @csrf
                                                 <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
                                                     <div class="flex-1">
                                                         <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 bg-white px-3 py-2.5 text-sm transition hover:border-status-primary">
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
-                                                            <span class="text-slate-500" x-data="{ fileName: '' }">
+                                                            <span class="text-slate-500">
                                                                 <span x-show="!fileName">Pilih file bukti...</span>
                                                                 <span x-show="fileName" x-text="fileName" class="font-medium text-slate-700"></span>
-                                                                <input type="file" name="proof_file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.zip,.html,.css,.js,.sql" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
+                                                                <input type="file" name="proof_file" x-ref="proofInput" accept="{{ \App\Support\UploadRules::acceptAttribute() }}" required class="hidden" @change="check($event.target.files[0])">
                                                             </span>
                                                         </label>
+                                                        <p x-show="error" x-text="error" x-cloak class="mt-1 text-[10px] font-medium text-red-500"></p>
                                                     </div>
                                                     <button type="submit" class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-status-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                                                         Kirim Bukti
                                                     </button>
                                                 </div>
-                                                <p class="mt-1 text-[10px] text-slate-400">Maks. 5MB · PDF, DOC, DOCX, JPG, PNG, HTML, CSS, JS, SQL, ZIP</p>
+                                                <p class="mt-1 text-[10px] text-slate-400">Maks. 5 MB · {{ \App\Support\UploadRules::label() }}</p>
                                             </form>
                                         @endif
                                     </div>
@@ -171,17 +196,41 @@
                             class="space-y-3"
                         >
                             @csrf
-                            <label class="flex cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center transition hover:border-status-primary hover:bg-blue-50/30"
-                                x-data="{ fileName: '' }"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-status-primary/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
-                                </svg>
-                                <span x-show="!fileName" class="text-sm font-semibold text-status-primary">Pilih file atau drag &amp; drop disini</span>
-                                <span x-show="fileName" x-text="fileName" class="text-sm font-semibold text-slate-800"></span>
-                                <span class="text-xs text-slate-400">PDF, Word, Excel, PPT, Gambar, HTML, CSS, JS, SQL, ZIP · Maks 10MB</span>
-                                <input type="file" name="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.html,.css,.js,.sql" required class="hidden" @change="fileName = $event.target.files[0]?.name || ''">
-                            </label>
+                            <div x-data="{
+                                fileName: '',
+                                error: '',
+                                allowed: @json(\App\Support\UploadRules::EXTENSIONS),
+                                maxBytes: @json(\App\Support\UploadRules::MAX_BYTES),
+                                check(file) {
+                                    if (!file) { this.fileName = ''; this.error = ''; return; }
+                                    const ext = (file.name.split('.').pop() || '').toLowerCase();
+                                    if (file.size > this.maxBytes) {
+                                        this.error = 'Ukuran file maksimal 5 MB.';
+                                        this.fileName = '';
+                                        this.$refs.docInput.value = '';
+                                        return;
+                                    }
+                                    if (!this.allowed.includes(ext)) {
+                                        this.error = 'Format file tidak didukung.';
+                                        this.fileName = '';
+                                        this.$refs.docInput.value = '';
+                                        return;
+                                    }
+                                    this.error = '';
+                                    this.fileName = file.name;
+                                }
+                            }">
+                                <label class="flex cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/60 px-4 py-8 text-center transition hover:border-status-primary hover:bg-blue-50/30">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-status-primary/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                                    </svg>
+                                    <span x-show="!fileName" class="text-sm font-semibold text-status-primary">Pilih file atau drag &amp; drop disini</span>
+                                    <span x-show="fileName" x-text="fileName" class="text-sm font-semibold text-slate-800"></span>
+                                    <span class="text-xs text-slate-400">Maks 5 MB · {{ \App\Support\UploadRules::label() }}</span>
+                                    <input type="file" name="file" x-ref="docInput" accept="{{ \App\Support\UploadRules::acceptAttribute() }}" required class="hidden" @change="check($event.target.files[0])">
+                                </label>
+                                <p x-show="error" x-text="error" x-cloak class="mt-2 text-xs font-medium text-red-500"></p>
+                            </div>
                             <x-input-error :messages="$errors->get('file')" />
                             <x-primary-button class="w-full justify-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
@@ -192,7 +241,7 @@
                         <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-500">Upload dokumen ditutup setelah tugas dikumpulkan.</p>
                     @endif
 
-                    @if (! in_array($taskGroup->status, [\App\Models\TaskGroup::STATUS_SUBMITTED, \App\Models\TaskGroup::STATUS_COMPLETED], true) && $taskGroup->progress >= 100)
+                    @if (! in_array($taskGroup->status, [\App\Models\TaskGroup::STATUS_SUBMITTED, \App\Models\TaskGroup::STATUS_COMPLETED], true) && ($taskGroup->progress >= 100 || $task->subtasks->isEmpty()))
                         <form method="POST" action="{{ route('siswa.tasks.submit', $task) }}" class="mt-4">
                             @csrf
                             <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">

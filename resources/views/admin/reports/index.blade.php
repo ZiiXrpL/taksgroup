@@ -9,10 +9,10 @@
 
             <div class="flex gap-2">
                 <a href="{{ route('admin.reports.export', request()->query()) }}">
-                    <x-primary-button type="button" class="!bg-status-success shrink-0">Export Excel (CSV)</x-primary-button>
+                    <x-primary-button type="button" class="!bg-status-success shrink-0">Export Excel (XLSX)</x-primary-button>
                 </a>
-                <a href="{{ route('admin.reports.print', request()->query()) }}" target="_blank">
-                    <x-primary-button type="button" class="shrink-0">Export PDF (Cetak)</x-primary-button>
+                <a href="{{ route('admin.reports.print', request()->query()) }}">
+                    <x-primary-button type="button" class="shrink-0">Export PDF</x-primary-button>
                 </a>
             </div>
         </div>
@@ -93,9 +93,6 @@
                                     Deadline {{ $task->deadline?->translatedFormat('d M Y') ?? '-' }}
                                 </p>
                             </div>
-                            <x-badge :color="\App\Models\Task::priorityColor($task->priority)">
-                                {{ \App\Models\Task::priorityLabel($task->priority) }}
-                            </x-badge>
                         </div>
 
                         <div class="overflow-x-auto">
